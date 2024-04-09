@@ -1,5 +1,6 @@
 """The main module that controls lichess-bot."""
 import argparse
+import threading
 import chess
 import chess.pgn
 from chess.variant import find_variant
@@ -31,6 +32,7 @@ from http.client import RemoteDisconnected
 from queue import Queue, Empty
 from multiprocessing.pool import Pool
 from typing import Any, Optional, Union
+from server import *
 USER_PROFILE_TYPE = dict[str, Any]
 EVENT_TYPE = dict[str, Any]
 PLAY_GAME_ARGS_TYPE = dict[str, Any]
@@ -650,6 +652,10 @@ def play_game(li: LICHESS_TYPE,
                         say_hello(conversation, hello, hello_spectators, board)
                         setup_timer = Timer()
                         print_move_number(board)
+                        print("waiting for move_ready")
+                        wait_move_ready()
+                        print("moving")
+                        update_communication(MOVE_READY, False)
                         move_attempted = True
                         engine.play_move(board,
                                          game,
@@ -1107,9 +1113,25 @@ def check_python_version() -> None:
         else:
             raise out_of_date_error
 
+def wait_move_ready():
+    move_ready = check_communication().get(MOVE_READY, False)
+    while not move_ready:
+        if not move_ready:
+            move_ready = check_communication().get(MOVE_READY, False)
+            time.sleep(1)  # Sleep to reduce tight looping
+        else:
+            break  # Exit loop if move_ready is True
+        
+def start_server():
+    # Initialize the event and start the server in a separate thread
+    server_thread = threading.Thread(target=run_server)
+    server_thread.daemon = True  # This makes the server thread exit when the main thread exits
+    server_thread.start()
+
 
 if __name__ == "__main__":
     multiprocessing.set_start_method('spawn')
+    start_server()
     try:
         while restart:
             restart = False
