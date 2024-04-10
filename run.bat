@@ -73,7 +73,7 @@ echo Virtual environment activated.
 echo Installing dependencies...
 CALL pip install -r requirements.txt
 
-CALL python lichess-bot.py  
+CALL python server.py  
 
 @rem below are functions for the script   next line skips these during normal execution
 goto end

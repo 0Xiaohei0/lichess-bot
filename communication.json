@@ -1,1 +1,7 @@
-{"move_ready": false}
+{
+    "move_ready": false,
+    "opponent_name": "",
+    "joined": true,
+    "side": "white",
+    "current_side": "white"
+}

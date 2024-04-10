@@ -225,6 +225,7 @@ def start(li: LICHESS_TYPE, user_profile: USER_PROFILE_TYPE, config: Configurati
     :param one_game: Whether the bot should play only one game. Only used in `test_bot/test_bot.py` to test lichess-bot.
     """
     logger.info(f"You're now connected to {config.url} and awaiting challenges.")
+    # update_communication(STARTED, True)
     manager = multiprocessing.Manager()
     challenge_queue: MULTIPROCESSING_LIST_TYPE = manager.list()
     control_queue: CONTROL_QUEUE_TYPE = manager.Queue()
@@ -613,6 +614,10 @@ def play_game(li: LICHESS_TYPE,
         logger.debug(f"The engine for game {game_id} has pid={engine.get_pid()}")
         conversation = Conversation(game, engine, li, __version__, challenge_queue)
 
+        # update_communication(OPPONENT_NAME, user_profile["username"])
+        update_communication(JOINED, True)
+        update_communication(SIDE, game.my_color)
+        
         logger.info(f"+++ {game}")
 
         is_correspondence = game.speed == "correspondence"
@@ -652,6 +657,7 @@ def play_game(li: LICHESS_TYPE,
                         say_hello(conversation, hello, hello_spectators, board)
                         setup_timer = Timer()
                         print_move_number(board)
+                        update_communication(CURRENT_SIDE, board.turn)
                         print("waiting for move_ready")
                         wait_move_ready()
                         print("moving")
@@ -1122,6 +1128,15 @@ def wait_move_ready():
         else:
             break  # Exit loop if move_ready is True
         
+        
+def start_server():
+    # Initialize the event and start the server in a separate thread
+    server_thread = threading.Thread(target=run_server)
+    server_thread.daemon = True  # This makes the server thread exit when the main thread exits
+    server_thread.start()
+
+
+
 def start_server():
     # Initialize the event and start the server in a separate thread
     server_thread = threading.Thread(target=run_server)
@@ -1131,7 +1146,6 @@ def start_server():
 
 if __name__ == "__main__":
     multiprocessing.set_start_method('spawn')
-    start_server()
     try:
         while restart:
             restart = False
