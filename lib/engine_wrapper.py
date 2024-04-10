@@ -21,6 +21,7 @@ from lib.timer import Timer, msec, seconds, msec_str, sec_str, to_seconds
 from extra_game_handlers import game_specific_options
 from typing import Any, Optional, Union, Literal, Type
 from types import TracebackType
+from server import *
 OPTIONS_TYPE = dict[str, Any]
 MOVE_INFO_TYPE = dict[str, Any]
 COMMANDS_TYPE = list[str]
@@ -197,11 +198,16 @@ class EngineWrapper:
 
         self.add_comment(best_move, board)
         self.print_stats()
+        
+        print("waiting for move_ready")
+        wait_move_ready()
+        print("moving")
+        update_communication(MOVE_READY, False)
         if best_move.resigned and len(board.move_stack) >= 2:
             li.resign(game.id)
         else:
             li.make_move(game.id, best_move)
-
+        
     def add_go_commands(self, time_limit: chess.engine.Limit) -> chess.engine.Limit:
         """Add extra commands to send to the engine. For example, to search for 1000 nodes or up to depth 10."""
         movetime_cfg = self.go_commands.movetime

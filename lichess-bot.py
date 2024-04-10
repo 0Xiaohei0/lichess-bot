@@ -652,16 +652,12 @@ def play_game(li: LICHESS_TYPE,
                 elif u_type == "gameState":
                     game.state = upd
                     board = setup_board(game)
+                    update_communication(CURRENT_SIDE, "white" if board.turn == chess.WHITE else "black")
                     if not is_game_over(game) and is_engine_move(game, prior_game, board):
                         disconnect_time = correspondence_disconnect_time
                         say_hello(conversation, hello, hello_spectators, board)
                         setup_timer = Timer()
                         print_move_number(board)
-                        update_communication(CURRENT_SIDE, board.turn)
-                        print("waiting for move_ready")
-                        wait_move_ready()
-                        print("moving")
-                        update_communication(MOVE_READY, False)
                         move_attempted = True
                         engine.play_move(board,
                                          game,
@@ -681,6 +677,9 @@ def play_game(li: LICHESS_TYPE,
                         conversation.send_message("spectator", goodbye_spectators)
 
                     wb = "w" if board.turn == chess.WHITE else "b"
+                    print(f"board.turn: {board.turn}")
+                    update_communication(CURRENT_SIDE, "white" if board.turn == chess.WHITE else "black")
+                    
                     terminate_time = msec(upd[f"{wb}time"]) + msec(upd[f"{wb}inc"]) + seconds(60)
                     game.ping(abort_time, terminate_time, disconnect_time)
                     prior_game = copy.deepcopy(game)
@@ -1118,15 +1117,6 @@ def check_python_version() -> None:
             logger.warning(out_of_date_warning)
         else:
             raise out_of_date_error
-
-def wait_move_ready():
-    move_ready = check_communication().get(MOVE_READY, False)
-    while not move_ready:
-        if not move_ready:
-            move_ready = check_communication().get(MOVE_READY, False)
-            time.sleep(1)  # Sleep to reduce tight looping
-        else:
-            break  # Exit loop if move_ready is True
         
         
 def start_server():

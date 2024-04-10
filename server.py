@@ -115,6 +115,15 @@ def update_communication(key, value):
     data[key] = value 
     set_communication(data) 
     
+def wait_move_ready():
+    move_ready = check_communication().get(MOVE_READY, False)
+    while not move_ready:
+        if not move_ready:
+            move_ready = check_communication().get(MOVE_READY, False)
+            time.sleep(1)  # Sleep to reduce tight looping
+        else:
+            break  # Exit loop if move_ready is True
+    
 if __name__ == "__main__":
     reset_communication()
     run_server()
