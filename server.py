@@ -18,7 +18,8 @@ SIDE = "side"
 
 CURRENT_SIDE = "current_side"
 
-running = False
+bot_running = False
+opponent_running = False
 class RequestHandler(BaseHTTPRequestHandler):
     
     def do_POST(self):
@@ -27,6 +28,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.handle_make_move()
         elif self.path == '/start_game':
             self.handle_start_game()
+        elif self.path == '/start_opponent':
+            self.handle_start_opponent()
         else:
             self.handle_not_found()
             return
@@ -47,13 +50,22 @@ class RequestHandler(BaseHTTPRequestHandler):
         update_communication(MOVE_READY, True)
         
     def handle_start_game(self):
-        global running
-        if(not running):
+        global bot_running
+        if(not bot_running):
             script_thread = threading.Thread(target=self.run_chess_bot)
             script_thread.start()
-            running = True
+            bot_running = True
         else:
             print(f"lichess-bot.py is already running")
+
+    def handle_start_opponent(self):
+        global opponent_running
+        if(not opponent_running):
+            script_thread = threading.Thread(target=self.run_opponent_bot)
+            script_thread.start()
+            opponent_running = True
+        else:
+            print(f"opponent-bot.py is already running")
             
     def handle_game_state(self):
         self.send_response(200)  # Move the response initiation here
@@ -84,8 +96,10 @@ class RequestHandler(BaseHTTPRequestHandler):
     
         
     def run_chess_bot(self):
-        # Replace 'path/to/your_script.py' with the actual path to your script
         subprocess.run(['python', './lichess-bot.py'])
+
+    def run_opponent_bot(self):
+        subprocess.run(['python', './opponent-bot.py', '--config', './opponent_config.yml'])
         
 
 def run_server():

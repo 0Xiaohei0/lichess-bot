@@ -47,6 +47,8 @@ LICHESS_TYPE = Union[lichess.Lichess, test_bot.lichess.Lichess]
 
 logger = logging.getLogger(__name__)
 
+CHALLENGE_USERNAME = "AyaChessOvO"
+
 with open("lib/versioning.yml") as version_file:
     versioning_info = yaml.safe_load(version_file)
 
@@ -371,8 +373,8 @@ def lichess_bot_main(li: LICHESS_TYPE,
                                              active_games,
                                              max_games)
             accept_challenges(li, challenge_queue, active_games, max_games)
-            matchmaker.challenge(active_games, challenge_queue, max_games)
-            matchmaker.challenge(active_games, challenge_queue, max_games)
+            matchmaker.challenge_direct(CHALLENGE_USERNAME)
+            # matchmaker.challenge(active_games, challenge_queue, max_games)
             check_online_status(li, user_profile, last_check_online_time)
 
             control_queue.task_done()
@@ -692,8 +694,6 @@ def play_game(li: LICHESS_TYPE,
                     break
             finally:
                 upd = {}
-
-        update_communication(JOINED, False)
 
         pgn_record = try_get_pgn_game_record(li, config, game, board, engine)
     final_queue_entries(control_queue, correspondence_queue, game, is_correspondence, pgn_record)
@@ -1060,7 +1060,7 @@ def start_lichess_bot() -> None:
     logging_level = logging.DEBUG if args.v else logging.INFO
     auto_log_filename = None
     if not args.disable_auto_logging:
-        auto_log_filename = "./lichess_bot_auto_logs/recent.log"
+        auto_log_filename = "./lichess_bot_auto_logs/opponent-recent.log"
     logging_configurer(logging_level, args.logfile, auto_log_filename, True)
     logger.info(intro(), extra={"highlighter": None})
 

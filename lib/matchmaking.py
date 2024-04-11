@@ -239,6 +239,29 @@ class Matchmaking:
 
         return bot_username, base_time, increment, days, variant, mode
 
+    def choose_opponent(self, username: str) -> tuple[Optional[str], int, int, int, str, str]:
+        """Choose an opponent."""
+        override_choice = random.choice(self.matchmaking_cfg.overrides.keys() + [None])
+        logger.info(f"Using the {override_choice or 'default'} matchmaking configuration.")
+        override = {} if override_choice is None else self.matchmaking_cfg.overrides.lookup(override_choice)
+        match_config = self.matchmaking_cfg | override
+
+        variant = self.get_random_config_value(match_config, "challenge_variant", self.variants)
+        mode = self.get_random_config_value(match_config, "challenge_mode", ["casual", "rated"])
+
+        base_time = random.choice(match_config.challenge_initial_time)
+        increment = random.choice(match_config.challenge_increment)
+        days = random.choice(match_config.challenge_days)
+
+        play_correspondence = [bool(days), not bool(base_time or increment)]
+        if random.choice(play_correspondence):
+            base_time = 0
+            increment = 0
+        else:
+            days = 0
+
+        return username, base_time, increment, days, variant, mode
+
     def get_random_config_value(self, config: Configuration, parameter: str, choices: list[str]) -> str:
         """Choose a random value from `choices` if the parameter value in the config is `random`."""
         value: str = config.lookup(parameter)
@@ -262,6 +285,23 @@ class Matchmaking:
         logger.info("Challenging a random bot")
         self.update_user_profile()
         bot_username, base_time, increment, days, variant, mode = self.choose_opponent()
+        logger.info(f"Will challenge {bot_username} for a {variant} game.")
+        challenge_id = self.create_challenge(bot_username, base_time, increment, days, variant, mode) if bot_username else ""
+        logger.info(f"Challenge id is {challenge_id if challenge_id else 'None'}.")
+        self.challenge_id = challenge_id
+
+    def challenge_direct(self, username: str) -> None:
+        """
+        Challenge an opponent.
+
+        :param active_games: The games that the bot is playing.
+        :param challenge_queue: The queue containing the challenges.
+        :param max_games: The maximum allowed number of simultaneous games.
+        """
+
+        logger.info("Challenging a random bot")
+        self.update_user_profile()
+        bot_username, base_time, increment, days, variant, mode = self.choose_opponent(username)
         logger.info(f"Will challenge {bot_username} for a {variant} game.")
         challenge_id = self.create_challenge(bot_username, base_time, increment, days, variant, mode) if bot_username else ""
         logger.info(f"Challenge id is {challenge_id if challenge_id else 'None'}.")
