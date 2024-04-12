@@ -15,6 +15,8 @@ OPPONENT_NAME = "opponent_name"
 JOINED = "joined"
 
 SIDE = "side"
+CHALLENGE = "challenge"
+
 
 CURRENT_SIDE = "current_side"
 
@@ -30,6 +32,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.handle_start_game()
         elif self.path == '/start_opponent':
             self.handle_start_opponent()
+        elif self.path == '/start_challenge':
+            self.handle_start_challenge()
         else:
             self.handle_not_found()
             return
@@ -66,6 +70,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             opponent_running = True
         else:
             print(f"opponent-bot.py is already running")
+
+    def handle_start_challenge(self):
+       update_communication(CHALLENGE, True)
             
     def handle_game_state(self):
         self.send_response(200)  # Move the response initiation here
@@ -118,6 +125,10 @@ def check_communication():
     with open(COMMUNICATIONFILENAME, 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data
+    
+def get_communication(key):
+    data = check_communication() 
+    return data[key]
     
 def set_communication(data):
     with open(COMMUNICATIONFILENAME, 'w', encoding='utf-8') as file:

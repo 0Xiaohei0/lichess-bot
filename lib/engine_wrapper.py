@@ -199,10 +199,12 @@ class EngineWrapper:
         self.add_comment(best_move, board)
         self.print_stats()
         
-        print("waiting for move_ready")
-        wait_move_ready()
+        # Skip waiting on opponent turn.
+        if(get_communication(SIDE) == get_communication(CURRENT_SIDE)):
+            print("waiting for move_ready")
+            wait_move_ready()
         print("moving")
-        update_communication(MOVE_READY, False)
+        # update_communication(MOVE_READY, False)
         if best_move.resigned and len(board.move_stack) >= 2:
             li.resign(game.id)
         else:

@@ -373,7 +373,9 @@ def lichess_bot_main(li: LICHESS_TYPE,
                                              active_games,
                                              max_games)
             accept_challenges(li, challenge_queue, active_games, max_games)
-            matchmaker.challenge_direct(CHALLENGE_USERNAME)
+            if(check_communication().get(CHALLENGE, False)):
+                matchmaker.challenge_direct(CHALLENGE_USERNAME)
+                update_communication(CHALLENGE, False)
             # matchmaker.challenge(active_games, challenge_queue, max_games)
             check_online_status(li, user_profile, last_check_online_time)
 
@@ -617,9 +619,7 @@ def play_game(li: LICHESS_TYPE,
         logger.debug(f"The engine for game {game_id} has pid={engine.get_pid()}")
         conversation = Conversation(game, engine, li, __version__, challenge_queue)
 
-        # update_communication(OPPONENT_NAME, user_profile["username"])
-        update_communication(JOINED, True)
-        update_communication(SIDE, game.my_color)
+
         
         logger.info(f"+++ {game}")
 
@@ -655,7 +655,6 @@ def play_game(li: LICHESS_TYPE,
                 elif u_type == "gameState":
                     game.state = upd
                     board = setup_board(game)
-                    update_communication(CURRENT_SIDE, "white" if board.turn == chess.WHITE else "black")
                     if not is_game_over(game) and is_engine_move(game, prior_game, board):
                         disconnect_time = correspondence_disconnect_time
                         say_hello(conversation, hello, hello_spectators, board)
@@ -681,7 +680,6 @@ def play_game(li: LICHESS_TYPE,
 
                     wb = "w" if board.turn == chess.WHITE else "b"
                     print(f"board.turn: {board.turn}")
-                    update_communication(CURRENT_SIDE, "white" if board.turn == chess.WHITE else "black")
                     
                     terminate_time = msec(upd[f"{wb}time"]) + msec(upd[f"{wb}inc"]) + seconds(60)
                     game.ping(abort_time, terminate_time, disconnect_time)
@@ -1120,22 +1118,6 @@ def check_python_version() -> None:
             logger.warning(out_of_date_warning)
         else:
             raise out_of_date_error
-        
-        
-def start_server():
-    # Initialize the event and start the server in a separate thread
-    server_thread = threading.Thread(target=run_server)
-    server_thread.daemon = True  # This makes the server thread exit when the main thread exits
-    server_thread.start()
-
-
-
-def start_server():
-    # Initialize the event and start the server in a separate thread
-    server_thread = threading.Thread(target=run_server)
-    server_thread.daemon = True  # This makes the server thread exit when the main thread exits
-    server_thread.start()
-
 
 if __name__ == "__main__":
     multiprocessing.set_start_method('spawn')

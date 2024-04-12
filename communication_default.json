@@ -3,5 +3,6 @@
     "opponent_name": "",
     "joined": false,
     "side": "",
-    "current_side": ""
+    "current_side": "",
+    "challenge": ""
 }
