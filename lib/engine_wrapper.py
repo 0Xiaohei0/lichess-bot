@@ -204,7 +204,7 @@ class EngineWrapper:
             print("waiting for move_ready")
             wait_move_ready()
         print("moving")
-        # update_communication(MOVE_READY, False)
+        update_communication(MOVE_READY, False)
         if best_move.resigned and len(board.move_stack) >= 2:
             li.resign(game.id)
         else:

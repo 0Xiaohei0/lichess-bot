@@ -239,7 +239,7 @@ class Matchmaking:
 
         return bot_username, base_time, increment, days, variant, mode
 
-    def choose_opponent(self, username: str) -> tuple[Optional[str], int, int, int, str, str]:
+    def get_opponent(self, username: str) -> tuple[Optional[str], int, int, int, str, str]:
         """Choose an opponent."""
         override_choice = random.choice(self.matchmaking_cfg.overrides.keys() + [None])
         logger.info(f"Using the {override_choice or 'default'} matchmaking configuration.")
@@ -301,8 +301,8 @@ class Matchmaking:
 
         logger.info("Challenging a random bot")
         self.update_user_profile()
-        bot_username, base_time, increment, days, variant, mode = self.choose_opponent(username)
-        base_time = 60
+        bot_username, base_time, increment, days, variant, mode = self.get_opponent(username)
+        base_time = 360
         increment = 1
         variant = "standard"
         mode = "casual"
