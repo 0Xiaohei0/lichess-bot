@@ -342,8 +342,6 @@ class EngineWrapper:
     def readable_wdl(self, wdl: chess.engine.PovWdl) -> str:
         """Convert the WDL score to a percentage, so it is more human-readable."""
         wdl_percentage = round(wdl.relative.expectation() * 100, 1)
-        print(f"self.readable_wdl {wdl_percentage}")
-        update_communication(WINRATE, wdl_percentage) 
         return f"{wdl_percentage}%"
 
     def readable_time(self, number: int) -> str:

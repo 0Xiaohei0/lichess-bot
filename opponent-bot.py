@@ -4,7 +4,7 @@ import threading
 import chess
 import chess.pgn
 from chess.variant import find_variant
-from lib import engine_wrapper, model, lichess, matchmaking
+from lib2 import engine_wrapper, model, lichess, matchmaking
 import json
 import logging
 import logging.handlers
@@ -21,9 +21,9 @@ import sys
 import yaml
 import traceback
 import test_bot.lichess
-from lib.config import load_config, Configuration
-from lib.conversation import Conversation, ChatLine
-from lib.timer import Timer, seconds, msec, hours, to_seconds
+from lib2.config import load_config, Configuration
+from lib2.conversation import Conversation, ChatLine
+from lib2.timer import Timer, seconds, msec, hours, to_seconds
 from requests.exceptions import ChunkedEncodingError, ConnectionError, HTTPError, ReadTimeout
 from rich.logging import RichHandler
 from collections import defaultdict

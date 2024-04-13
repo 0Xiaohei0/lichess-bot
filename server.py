@@ -16,7 +16,7 @@ JOINED = "joined"
 
 SIDE = "side"
 CHALLENGE = "challenge"
-
+WINRATE = "winrate"
 
 CURRENT_SIDE = "current_side"
 

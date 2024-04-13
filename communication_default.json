@@ -4,5 +4,6 @@
     "joined": false,
     "side": "",
     "current_side": "",
-    "challenge": ""
+    "challenge": "",
+    "winrate": ""
 }
