@@ -1,9 +1,9 @@
 {
-    "move_ready": true,
+    "move_ready": false,
     "opponent_name": "",
     "joined": true,
-    "side": "black",
-    "current_side": "white",
+    "side": "white",
+    "current_side": "black",
     "challenge": false,
     "winrate": 0.0
 }

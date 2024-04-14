@@ -2,11 +2,11 @@
 from __future__ import annotations
 import logging
 import test_bot.lichess
-from lib import model
-from lib.engine_wrapper import EngineWrapper
-from lib import lichess
+from lib2 import model
+from lib2.engine_wrapper import EngineWrapper
+from lib2 import lichess
 from collections.abc import Sequence
-from lib.timer import seconds
+from lib2.timer import seconds
 from typing import Union
 MULTIPROCESSING_LIST_TYPE = Sequence[model.Challenge]
 LICHESS_TYPE = Union[lichess.Lichess, test_bot.lichess.Lichess]

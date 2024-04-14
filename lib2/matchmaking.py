@@ -3,12 +3,12 @@ import random
 import logging
 import datetime
 import test_bot.lichess
-from lib import model
-from lib.timer import Timer, seconds, minutes, days, years
+from lib2 import model
+from lib2.timer import Timer, seconds, minutes, days, years
 from collections import defaultdict
 from collections.abc import Sequence
-from lib import lichess
-from lib.config import Configuration, FilterType
+from lib2 import lichess
+from lib2.config import Configuration, FilterType
 from typing import Any, Optional, Union
 USER_PROFILE_TYPE = dict[str, Any]
 EVENT_TYPE = dict[str, Any]
